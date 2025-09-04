@@ -21,19 +21,25 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         . . . . . . . . . . . . . . . . 
         `, foot_soldier, 100, 0)
     bullet.follow(myEnemy)
-    pause(2000)
-    sprites.destroy(bullet)
+    pause(200)
+})
+info.onCountdownEnd(function () {
+    game.gameOver(true)
+})
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Projectile, function (sprite, otherSprite) {
+    pause(500)
+    sprites.destroy(bullet, effects.none, 1)
 })
 sprites.onOverlap(SpriteKind.Enemy, SpriteKind.Player, function (sprite, otherSprite) {
     info.changeLifeBy(-0.01)
-    sprites.destroy(myEnemy, effects.spray, 500)
+    sprites.destroy(myEnemy, effects.none, 1)
 })
 info.onLifeZero(function () {
-	
+    game.gameOver(false)
 })
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
-    sprites.destroy(myEnemy)
-    sprites.destroy(bullet, effects.disintegrate, 100)
+    sprites.destroy(myEnemy, effects.none, 1)
+    sprites.destroy(bullet, effects.none, 1)
 })
 let myEnemy: Sprite = null
 let bullet: Sprite = null
@@ -73,12 +79,16 @@ foot_soldier = sprites.create(img`
     .........f111f.feeef............
     .........ffff...ffff............
     `, SpriteKind.Player)
+controller.moveSprite(foot_soldier, 0, 100)
 foot_soldier.setPosition(22, 91)
 scene.setBackgroundImage(assets.image`background`)
 info.setLife(20)
+if (bullet) {
+    pause(2000)
+    sprites.destroy(bullet)
+}
 game.onUpdateInterval(2000, function () {
     myEnemy = sprites.create(assets.image`sunflower`, SpriteKind.Enemy)
     myEnemy.setPosition(147, 91)
     myEnemy.follow(foot_soldier)
-    myEnemy.setScale(2, ScaleAnchor.Middle)
 })
